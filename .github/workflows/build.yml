@@ -1,0 +1,41 @@
+name: Build and Test React App
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Récupérer le code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Installer Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # 3. Installer les dépendances
+      - name: Install dependencies
+        run: npm install
+
+      # 4. Build du projet
+      - name: Build app
+        run: npm run build
+
+      # 5. Lancer l’application en arrière-plan
+      - name: Start app
+        run: |
+          nohup npm start &
+
+      # 6. Vérifier que l’app tourne avec curl
+      - name: Test with curl
+        run: |
+          sleep 10  # attendre que le serveur démarre
+          curl -I http://localhost:3000
